@@ -1,9 +1,16 @@
 package com.renderthat.kafkaconsumer;
 
+import com.obi.cgisolution.schema.ProductBundle;
+import org.apache.avro.specific.SpecificRecord;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+
+@ComponentScan({"com.obi.cgisolution.schema", "com.renderthat.kafkaconsumer"})
 
 @SpringBootApplication(exclude = {
 		MongoAutoConfiguration.class,
