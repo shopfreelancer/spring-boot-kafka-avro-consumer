@@ -1,0 +1,56 @@
+{
+  "type": "record",
+  "name": "ProductBundle",
+  "namespace": "com.obi.cgisolution.schema",
+  "doc": "product bundles created in briefing tool",
+  "fields": [
+    {
+      "name": "product_bundle_id",
+      "type": "string"
+    },
+    {
+            "name": "type",
+            "type": {
+                    "type": "enum",
+                    "name": "product_bundle_type",
+                    "symbols": ["ARTICLES", "TOOLS"],
+                    "default": "ARTICLES"
+                }
+            
+    },
+    {
+      "name": "content_piece_id",
+      "type": ["null", "string"],
+      "default": "null"
+    },
+        {
+      "name": "content_piece_internal_id",
+      "type": ["null", "string"],
+      "default": "null"
+    },
+    {
+      "name": "products",
+      "type": {
+        "type": "array",
+        "items":{
+        "type": "record",
+        "name": "Product",
+        "fields" : [
+          {"name": "IsoSku", "type": "string"},           
+          {"name": "Qty", "type": "string"} 
+          ]
+        }
+      }
+    },
+    {
+            "name": "event_type",
+            "type": {
+                    "type": "enum",
+                    "name": "kafka_events",
+                    "symbols": ["CREATE", "UPDATE", "DELETE"],
+                    "default": "CREATE"
+                }
+            
+    }
+  ]
+}
