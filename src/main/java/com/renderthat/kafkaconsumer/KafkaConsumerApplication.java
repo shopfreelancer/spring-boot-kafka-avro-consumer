@@ -22,4 +22,10 @@ public class KafkaConsumerApplication {
 		SpringApplication.run(KafkaConsumerApplication.class, args);
 	}
 
+	@Bean
+	@ConditionalOnProperty(name = "SpecificRecord", matchIfMissing = true)
+	public SpecificRecord class1Service() {
+		return new ProductBundle();
+	}
+
 }

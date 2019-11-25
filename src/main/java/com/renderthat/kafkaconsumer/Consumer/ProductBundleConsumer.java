@@ -1,9 +1,12 @@
 package com.renderthat.kafkaconsumer.Consumer;
+
 import com.obi.cgisolution.schema.ProductBundle;
 import org.apache.avro.specific.SpecificRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.errors.SerializationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,27 +36,60 @@ public class ProductBundleConsumer implements ApplicationListener<ApplicationRea
     public void initConsumer() {
         Properties properties = config.getProperties();
 
-        KafkaConsumer<String, ProductBundle> kafkaConsumer = new KafkaConsumer<>(properties);
+        KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(properties);
         String topic = config.getTopic();
         kafkaConsumer.subscribe(Collections.singleton(topic));
 
         log.info("Waiting for data from kafka...");
 
-        while (true) {
-            log.info("Polling");
-            ConsumerRecords<String, ProductBundle> records = kafkaConsumer.poll(1000);
+        try {
+            while (true) {
+                log.info("Polling");
 
-            for (ConsumerRecord<String, ProductBundle> record : records) {
                 try {
-                    ProductBundle specificRecord = record.value();
-                    log.info(specificRecord.toString());
-                    log.info(record.getClass().toString());
-                } catch (Exception e){
-                    log.error("error while consuming kafka " + e.getMessage());
-                }
-            }
+                    ConsumerRecords<String, String> records = kafkaConsumer.poll(1000);
+                    log.info(records.toString());
+                    //consumeRecords(records, kafkaConsumer);
+                } catch (SerializationException e) {
+                    String s = e.getMessage().split("Error deserializing key/value for partition ")[1].split(". If needed, please seek past the record to continue consumption.")[0];
+                    String topics = s.split("-")[0];
+                    int offset = Integer.valueOf(s.split("offset ")[1]);
+                    //int partition = Integer.valueOf(s.split("-")[1].split(" at")[0]);
+                    int partition = 0;
 
+                    TopicPartition topicPartition = new TopicPartition(topics, partition);
+                    //log.info("Skipping " + topic + "-" + partition + " offset " + offset);
+                    kafkaConsumer.seek(topicPartition, offset + 1);
+                }
+
+            }
+        } finally {
+            kafkaConsumer.close();
+        }
+    }
+
+    public void consumeRecords(ConsumerRecords<String, ProductBundle> records, KafkaConsumer kafkaConsumer){
+        Integer recordCount = records.count();
+
+        for (ConsumerRecord<String, ProductBundle> record : records) {
+
+            ProductBundle specificRecord = record.value();
+            log.info(specificRecord.toString());
+            log.info(record.getClass().toString());
+        }
+
+
+        if (recordCount > 0) {
+            //BulkResponse bulkItemResponses = client.bulk(bulkRequest, RequestOptions.DEFAULT);
+            log.info("Committing offsets...");
             kafkaConsumer.commitSync();
+            log.info("Offsets have been committed");
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+
+            }
         }
     }
 }
