@@ -1,31 +1,42 @@
 package com.renderthat.kafkaconsumer;
 
-import com.obi.cgisolution.schema.ProductBundle;
-import org.apache.avro.specific.SpecificRecord;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
+import org.springframework.boot.autoconfigure.kafka.ConcurrentKafkaListenerContainerFactoryConfigurer;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
+import org.springframework.kafka.core.ConsumerFactory;
+import org.springframework.kafka.listener.SeekToCurrentErrorHandler;
 
-@ComponentScan({"com.obi.cgisolution.schema", "com.renderthat.kafkaconsumer"})
+
+@ComponentScan({"com.obi.cgisolution.schema", "com.renderthat.kafkaconsumer.spring"})
 
 @SpringBootApplication(exclude = {
 		MongoAutoConfiguration.class,
 		MongoDataAutoConfiguration.class
 })
-public class KafkaConsumerApplication {
+public class KafkaConsumerApplication  implements CommandLineRunner {
 
 	public static void main(String[] args) {
 		SpringApplication.run(KafkaConsumerApplication.class, args);
 	}
+	@Override
+	public void run(String... strings) throws Exception {
+	//
+	}
 
 	@Bean
-	@ConditionalOnProperty(name = "SpecificRecord", matchIfMissing = true)
-	public SpecificRecord class1Service() {
-		return new ProductBundle();
+	public ConcurrentKafkaListenerContainerFactory kafkaListenerContainerFactory(
+			ConcurrentKafkaListenerContainerFactoryConfigurer configurer,
+			ConsumerFactory<Object, Object> kafkaConsumerFactory) {
+		ConcurrentKafkaListenerContainerFactory<Object, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
+		configurer.configure(factory, kafkaConsumerFactory);
+		factory.setErrorHandler(new SeekToCurrentErrorHandler()); // <<<<<<
+		return factory;
 	}
 
 }
