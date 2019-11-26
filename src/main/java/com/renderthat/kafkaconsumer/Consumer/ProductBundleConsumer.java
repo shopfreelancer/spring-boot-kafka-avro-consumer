@@ -36,7 +36,7 @@ public class ProductBundleConsumer implements ApplicationListener<ApplicationRea
     public void initConsumer() {
         Properties properties = config.getProperties();
 
-        KafkaConsumer<String, String> kafkaConsumer = new KafkaConsumer<>(properties);
+        KafkaConsumer<String, ProductBundle> kafkaConsumer = new KafkaConsumer<>(properties);
         String topic = config.getTopic();
         kafkaConsumer.subscribe(Collections.singleton(topic));
 
@@ -47,19 +47,11 @@ public class ProductBundleConsumer implements ApplicationListener<ApplicationRea
                 log.info("Polling");
 
                 try {
-                    ConsumerRecords<String, String> records = kafkaConsumer.poll(1000);
-                    log.info(records.toString());
-                    //consumeRecords(records, kafkaConsumer);
-                } catch (SerializationException e) {
-                    String s = e.getMessage().split("Error deserializing key/value for partition ")[1].split(". If needed, please seek past the record to continue consumption.")[0];
-                    String topics = s.split("-")[0];
-                    int offset = Integer.valueOf(s.split("offset ")[1]);
-                    //int partition = Integer.valueOf(s.split("-")[1].split(" at")[0]);
-                    int partition = 0;
+                    ConsumerRecords<String, ProductBundle> records = kafkaConsumer.poll(1000);
+                    consumeRecords(records, kafkaConsumer);
+                } catch (Exception e) {
+                    log.error("Error during polling "+  e.getMessage());
 
-                    TopicPartition topicPartition = new TopicPartition(topics, partition);
-                    //log.info("Skipping " + topic + "-" + partition + " offset " + offset);
-                    kafkaConsumer.seek(topicPartition, offset + 1);
                 }
 
             }
@@ -77,7 +69,6 @@ public class ProductBundleConsumer implements ApplicationListener<ApplicationRea
             log.info(specificRecord.toString());
             log.info(record.getClass().toString());
         }
-
 
         if (recordCount > 0) {
             //BulkResponse bulkItemResponses = client.bulk(bulkRequest, RequestOptions.DEFAULT);
