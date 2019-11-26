@@ -3,6 +3,7 @@ package com.renderthat.kafkaconsumer.spring;
 import java.util.HashMap;
 import java.util.Map;
 
+import io.confluent.kafka.serializers.KafkaAvroDeserializerConfig;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +37,7 @@ public class ListenerConfig {
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class);
         props.put(ConsumerConfig.GROUP_ID_CONFIG, "avro");
         props.put("schema.registry.url", "http://127.0.0.1:8081");
-        props.put("specific.avro.reader", "true");
+        props.put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, true);
 
         return props;
     }
