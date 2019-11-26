@@ -1,32 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.2.1.RELEASE</version>
+		<version>2.1.5.RELEASE</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.renderthat</groupId>
-	<artifactId>kafka-consumer</artifactId>
+	<groupId>io.confluent.developer</groupId>
+	<artifactId>kafka-avro</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>kafka-consumer</name>
+	<name>kafka-avro</name>
 	<description>Demo project for Spring Boot</description>
 
 	<properties>
-		<avro.version>1.8.2</avro.version>
-		<kafka.version>0.11.0.1</kafka.version>
-		<confluent.version>3.3.1</confluent.version>
+		<java.version>1.8</java.version>
 	</properties>
-
-	<!--necessary to resolve confluent dependencies-->
-	<repositories>
-		<repository>
-			<id>confluent</id>
-			<url>http://packages.confluent.io/maven/</url>
-		</repository>
-	</repositories>
 
 	<dependencies>
 		<dependency>
@@ -81,45 +71,21 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
-			<!--for specific record-->
+
 			<plugin>
 				<groupId>org.apache.avro</groupId>
 				<artifactId>avro-maven-plugin</artifactId>
-				<version>${avro.version}</version>
+				<version>1.8.2</version>
 				<executions>
 					<execution>
 						<phase>generate-sources</phase>
 						<goals>
 							<goal>schema</goal>
-							<goal>protocol</goal>
-							<goal>idl-protocol</goal>
 						</goals>
 						<configuration>
-							<sourceDirectory>${project.basedir}/src/main/resources/avro</sourceDirectory>
+							<sourceDirectory>src/main/avro</sourceDirectory> <!-- <5> -->
+							<outputDirectory>${project.build.directory}/generated-sources</outputDirectory>
 							<stringType>String</stringType>
-							<createSetters>false</createSetters>
-							<enableDecimalLogicalType>true</enableDecimalLogicalType>
-							<fieldVisibility>private</fieldVisibility>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<!--force discovery of generated classes-->
-			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>build-helper-maven-plugin</artifactId>
-				<version>3.0.0</version>
-				<executions>
-					<execution>
-						<id>add-source</id>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>add-source</goal>
-						</goals>
-						<configuration>
-							<sources>
-								<source>target/generated-sources/avro</source>
-							</sources>
 						</configuration>
 					</execution>
 				</executions>
@@ -127,4 +93,10 @@
 		</plugins>
 	</build>
 
+	<repositories>
+		<repository>
+			<id>confluent</id>      <!-- <4> -->
+			<url>https://packages.confluent.io/maven/</url>
+		</repository>
+	</repositories>
 </project>

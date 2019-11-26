@@ -14,8 +14,11 @@ spring:
       specific:
         avro:
           reader: true
-      group-id: group_id
-      auto-offset-reset: latest
+      enable:
+        auto:
+          commit: false
+      group-id: client-group-2
+      auto-offset-reset: earliest
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
       properties:
