@@ -1,5 +1,6 @@
 package com.renderthat.kafkaconsumer;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -13,30 +14,23 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.listener.SeekToCurrentErrorHandler;
 
 
-@ComponentScan({"com.obi.cgisolution.schema", "com.renderthat.kafkaconsumer.spring"})
+//@ComponentScan({"com.obi.cgisolution.schema", "com.renderthat.kafkaconsumer.spring"})
 
-@SpringBootApplication(exclude = {
-		MongoAutoConfiguration.class,
-		MongoDataAutoConfiguration.class
-})
-public class KafkaConsumerApplication  implements CommandLineRunner {
+@SpringBootApplication()
+public class KafkaConsumerApplication{
+
+	@Value("${topic.name}")
+	private String topicName;
+
+	@Value("${topic.partitions-num}")
+	private Integer partitions;
+
+	@Value("${topic.replication-factor}")
+	private short replicationFactor;
 
 	public static void main(String[] args) {
 		SpringApplication.run(KafkaConsumerApplication.class, args);
 	}
-	@Override
-	public void run(String... strings) throws Exception {
-	//
-	}
 
-	@Bean
-	public ConcurrentKafkaListenerContainerFactory kafkaListenerContainerFactory(
-			ConcurrentKafkaListenerContainerFactoryConfigurer configurer,
-			ConsumerFactory<Object, Object> kafkaConsumerFactory) {
-		ConcurrentKafkaListenerContainerFactory<Object, Object> factory = new ConcurrentKafkaListenerContainerFactory<>();
-		configurer.configure(factory, kafkaConsumerFactory);
-		factory.setErrorHandler(new SeekToCurrentErrorHandler()); // <<<<<<
-		return factory;
-	}
 
 }
