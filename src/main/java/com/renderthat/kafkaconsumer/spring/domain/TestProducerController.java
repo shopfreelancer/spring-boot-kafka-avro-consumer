@@ -1,6 +1,7 @@
 package com.renderthat.kafkaconsumer.spring.domain;
 
 import com.obi.cgisolution.schema.Product;
+import com.obi.cgisolution.schema.ProductBundle;
 import com.obi.cgisolution.schema.kafka_events;
 import com.obi.cgisolution.schema.product_bundle_type;
 import com.renderthat.kafkaconsumer.spring.Producer;
@@ -23,18 +24,18 @@ public class TestProducerController {
     }
 
     @GetMapping(value = "/publish-test")
-    public void sendMessageToKafkaTopic2() {
-        ProductBundleEntity productBundleEntity = getProductBundleEntity();
-        this.producer.sendMessage(productBundleEntity);
+    public void sendMessageToKafkaTopic() {
+        ProductBundle productBundle = getProductBundle();
+        this.producer.sendMessage(productBundle);
     }
 
-    public ProductBundleEntity getProductBundleEntity(){
-        ProductBundleEntity productBundleEntity = new ProductBundleEntity();
-        productBundleEntity.setProductBundleId("1234");
-        productBundleEntity.setContentPieceId("12345");
-        productBundleEntity.setContentPieceInternalId("j_123456");
-        productBundleEntity.setType(product_bundle_type.ARTICLES);
-        productBundleEntity.setEventType(kafka_events.CREATE);
+    public ProductBundle getProductBundle(){
+        ProductBundle productBundle = new ProductBundle();
+        productBundle.setProductBundleId("1234");
+        productBundle.setContentPieceId("12345");
+        productBundle.setContentPieceInternalId("j_123456");
+        productBundle.setType(product_bundle_type.ARTICLES);
+        productBundle.setEventType(kafka_events.CREATE);
 
         Product product = new Product();
         product.setIsoSku("de-1234567");
@@ -42,8 +43,8 @@ public class TestProducerController {
 
         List<Product> products = new ArrayList<>();
         products.add(product);
-        productBundleEntity.setProducts(products);
+        productBundle.setProducts(products);
 
-        return productBundleEntity;
+        return productBundle;
     }
 }
