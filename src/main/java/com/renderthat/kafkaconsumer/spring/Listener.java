@@ -28,14 +28,12 @@ public class Listener {
     public void consume(ConsumerRecord<String, ProductBundle> record) {
 
         ProductBundle productBundle = record.value();
-        log.info(productBundle.toString());
+        log.info("Received avro: "+productBundle.toString());
 
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
         ProductBundleEntity productBundleEntity = modelMapper.map(productBundle, ProductBundleEntity.class);
-        log.info(productBundleEntity.toString());
         productBundleRepository.save(productBundleEntity);
-
     }
 }
