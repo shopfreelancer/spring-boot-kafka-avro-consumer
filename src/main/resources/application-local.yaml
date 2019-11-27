@@ -25,7 +25,7 @@ spring:
           commit: false
       group-id: client-group-2
       auto-offset-reset: earliest
-      key-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
       properties:
         interceptor.classes: io.confluent.monitoring.clients.interceptor.MonitoringConsumerInterceptor

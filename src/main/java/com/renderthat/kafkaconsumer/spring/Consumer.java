@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class Listener {
+public class Consumer {
 
     ProductBundleRepository productBundleRepository;
 
@@ -32,6 +32,10 @@ public class Listener {
         ProductBundle productBundle = record.value();
         log.info("Received avro: "+productBundle.toString());
 
+        saveProductBundle(productBundle);
+    }
+
+    private void saveProductBundle(ProductBundle productBundle){
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
 
