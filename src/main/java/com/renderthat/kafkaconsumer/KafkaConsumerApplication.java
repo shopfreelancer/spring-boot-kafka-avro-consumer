@@ -3,9 +3,10 @@ package com.renderthat.kafkaconsumer;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.kafka.annotation.EnableKafka;
 
-//@ComponentScan({"com.obi.cgisolution.schema", "com.renderthat.kafkaconsumer"})
-@SpringBootApplication()
+@SpringBootApplication
+@EnableKafka
 public class KafkaConsumerApplication{
 
 	public static void main(String[] args) {

@@ -10,8 +10,10 @@ import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.stereotype.Component;
 
 @Slf4j
+@Component
 public class Listener {
 
     ProductBundleRepository productBundleRepository;
@@ -25,7 +27,7 @@ public class Listener {
     private String topicName;
 
     @KafkaListener(topics = "cgisolution-productbundles", groupId = "group_id_2")
-    public void consume(ConsumerRecord<String, ProductBundle> record) {
+    public void receive(ConsumerRecord<String, ProductBundle> record) {
 
         ProductBundle productBundle = record.value();
         log.info("Received avro: "+productBundle.toString());

@@ -16,18 +16,16 @@ import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import io.confluent.kafka.serializers.KafkaAvroDeserializer;
 
-//import com.codenotfound.kafka.serializer.AvroDeserializer;
-
-
-@Configuration
-@EnableKafka
+//@EnableKafka
+//@Configuration
 public class ListenerConfig {
 
-    @Autowired
-    private Listener listener;
 
     @Value("${spring.kafka.bootstrap-servers.0}")
     private String bootstrapServers;
+
+    @Value("${spring.kafka.consumer.group-id}")
+    private String groupId;
 
     @Bean
     public Map<String, Object> consumerConfigs() {
@@ -35,7 +33,7 @@ public class ListenerConfig {
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, KafkaAvroDeserializer.class);
-        props.put(ConsumerConfig.GROUP_ID_CONFIG, "avro");
+        props.put(ConsumerConfig.GROUP_ID_CONFIG, groupId);
         props.put("schema.registry.url", "http://127.0.0.1:8081");
         props.put(KafkaAvroDeserializerConfig.SPECIFIC_AVRO_READER_CONFIG, true);
 
@@ -54,10 +52,5 @@ public class ListenerConfig {
     @Bean
     public ConsumerFactory<Integer, String> consumerFactory() {
         return new DefaultKafkaConsumerFactory<>(consumerConfigs());
-    }
-
-    @Bean
-    public Listener listener() {
-        return new Listener();
     }
 }
